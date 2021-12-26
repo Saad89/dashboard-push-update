@@ -23,12 +23,32 @@ services:
 
   mercure:
     image: dunglas/mercure
+    restart: unless-stopped
     environment:
-      - JWT_KEY=myJWTKey
-      - DEMO=1
-      - ALLOW_ANONYMOUS=1
-      - PUBLISH_ALLOWED_ORIGINS=*
-      - CORS_ALLOWED_ORIGINS=*
-      - DEBUG=1
+      DEMO: 1
+      ALLOW_ANONYMOUS: 1
+      PUBLISH_ALLOWED_ORIGINS: '*'
+      CORS_ALLOWED_ORIGINS: '*'
+      DEBUG: 1
+      MERCURE_PUBLISHER_JWT_KEY: eyJhbGciOiJIUzI1NiJ9.eyJtZXJjdXJlIjp7InN1YnNjcmliZSI6W10sInB1Ymxpc2giOlsiKiJdfX0.QQ57I7jc9OCOXgdqqNyhZV1yvgK8XudFXPgG3Y0ors4
+      MERCURE_SUBSCRIBER_JWT_KEY: eyJhbGciOiJIUzI1NiJ9.eyJtZXJjdXJlIjp7InN1YnNjcmliZSI6W10sInB1Ymxpc2giOlsiKiJdfX0.QQ57I7jc9OCOXgdqqNyhZV1yvgK8XudFXPgG3Y0ors4
+      SERVER_NAME: :80
+      # Set the URL of your Symfony project (without trailing slash!) as value of the cors_origins directive
+      ADDR: localhost:9090
+      MERCURE_EXTRA_DIRECTIVES: |
+        cors_origins http://localhost:8080
     ports:
       - "9090:80"
+    command: /usr/bin/caddy run -config /etc/caddy/Caddyfile.dev
+    volumes:
+      - mercure_data:/data
+      - mercure_config:/config
+    ###< symfony/mercure-bundle ###
+volumes:
+###> doctrine/doctrine-bundle ###
+  db-data:
+###< doctrine/doctrine-bundle ###
+
+###> symfony/mercure-bundle ###
+  mercure_data:
+  mercure_config:

@@ -32,3 +32,9 @@ services:
       - DEBUG=1
     ports:
       - "9090:80"
+
+###> symfony/mercure-bundle ###
+  mercure:
+    ports:
+      - "80"
+###< symfony/mercure-bundle ###

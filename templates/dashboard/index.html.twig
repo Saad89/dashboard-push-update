@@ -1,40 +1,159 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello DashboardController!{% endblock %}
+{% block title %}Information Dashboard!{% endblock %}
 
 {% block body %}
 <style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+        /* $linkColorOnBlack */
+        .flex-container {
+            /* We first create a flex layout context */
+            display: flex;
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+            /* Then we define the flow direction
+               and if we allow the items to wrap
+             * Remember this is the same as:
+             * flex-direction: row;
+             * flex-wrap: wrap;
+             */
+            flex-flow: row wrap;
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ '/home/saadelzwawy/Documents/pv-projects/dashbaord-with-push-updates/src/Controller/DashboardController.php'|file_link(0) }}">src/Controller/DashboardController.php</a></code></li>
-        <li>Your template at <code><a href="{{ '/home/saadelzwawy/Documents/pv-projects/dashbaord-with-push-updates/templates/dashboard/index.html.twig'|file_link(0) }}">templates/dashboard/index.html.twig</a></code></li>
-    </ul>
-</div>
-{% endblock %}
-{% block javascripts %}
-    <script>
-        let ul = null;
-        const es = new EventSource('http://localhost:9090/hub?topic=1e9');
-        es.onmessage = e => {
-            const data = JSON.parse(e.data);
+            /* Then we define how is distributed the remaining space */
+            justify-content: space-around;
 
-            if (!ul) {
-                ul = document.createElement('ul');
-
-                const messages = document.getElementById('main--container');
-                messages.innerHTML = '';
-                messages.append(ul);
-            }
-
-            const li = document.createElement('li');
-            li.append(document.createTextNode(data.headline));
-            ul.append(li);
+            padding: 0;
+            margin: 0;
+            list-style: none;
         }
-    </script>{% endblock %}
+
+        .flex-item {
+            background: tomato;
+            padding: 5px;
+            height: 150px;
+            margin-top: 10px;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            text-align: center;
+            width: 24%;
+        }
+
+
+        .header {
+            line-height: 14px;
+            font-weight: inherit;
+            font-size: 14px;
+            text-align: left;
+            height: 50%;
+        }
+
+        .count {
+            font-size: 3em;
+        }
+
+        .sub-div {
+            height: 18px;
+        }
+
+    @media screen and (max-width: 768px) {
+        .flex-item {
+            width: 23% !important;
+            margin-top: 10px !important;
+        }
+    }
+</style>
+<div class="flex-container">
+    <div class="flex-item">
+        <div class="sub-div">Collerys</div>
+        <div>
+            <div class="header">Anmeldungen am heutigen</div>
+            <div class="collerys register count">
+                {{ data.collerys.registrationsToday }}
+            </div>
+        </div>
+    </div>
+    <div class="flex-item">
+        <div class="sub-div">Duftz</div>
+        <div>
+            <div class="header">Anmeldungen am heutigen</div>
+            <div class="duftz register count">
+                {{ data.duftz.registrationsToday }}
+            </div>
+        </div>
+    </div>
+    <div class="flex-item">
+        <div class="sub-div">Belegbote</div>
+        <div>
+            <div class="header">Anmeldungen am heutigen</div>
+            <div class="belegbote register count">
+                {{ data.belegbote.registrationsToday }}
+            </div>
+        </div>
+    </div>
+    <div class="flex-item">
+        <div class="sub-div">Greetix</div>
+        <div>
+            <div class="header">Anmeldungen am heutigen</div>
+            <div class="greetix register count">
+                {{ data.greetix.registrationsToday }}
+            </div>
+        </div>
+    </div>
+    {# ///////// #}
+    <div class="flex-item" style="margin-top: 24px;">
+        <div class="sub-div"></div>
+        <div class="header">Website Besucher</div>
+        <div class="collerys visit count">
+            {{ data.collerys.visitorsToday }}
+        </div>
+    </div>
+    <div class="flex-item" style="margin-top: 24px;">
+        <div class="sub-div"></div>
+        <div class="header">Website Besucher</div>
+        <div class="duftz visit count">
+            {{ data.duftz.visitorsToday }}
+        </div>
+    </div>
+    <div class="flex-item" style="margin-top: 24px;">
+        <div class="sub-div"></div>
+        <div class="header">Website Besucher</div>
+        <div class="belegbote visit count">
+            {{ data.belegbote.visitorsToday }}
+        </div>
+    </div>
+    <div class="flex-item" style="margin-top: 24px;">
+        <div class="sub-div"></div>
+        <div class="header">Website Besucher</div>
+        <div class="greetix visit count">
+            {{ data.greetix.visitorsToday }}
+        </div>
+    </div>
+    {% endblock %}
+    {% block javascripts %}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"
+                crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"
+                crossorigin="anonymous"></script>
+        <script>
+            let ul = null;
+            const es = new EventSource('http://localhost:9090/.well-known/mercure?topic=1e9');
+            es.onmessage = e => {
+                const data = JSON.parse(e.data);
+                console.log(data);
+                document.getElementsByClassName('belegbote register')[0].innerHTML = data.belegbote.registrationsToday;
+                document.getElementsByClassName('belegbote visit')[0].innerHTML = data.belegbote.visitorsToday;
+
+                document.getElementsByClassName('duftz register')[0].innerHTML = data.duftz.registrationsToday;
+                document.getElementsByClassName('duftz visit')[0].innerHTML = data.duftz.visitorsToday;
+
+                document.getElementsByClassName('greetix register')[0].innerHTML = data.greetix.registrationsToday;
+                document.getElementsByClassName('greetix visit')[0].innerHTML = data.greetix.visitorsToday;
+
+                document.getElementsByClassName('collerys register')[0].innerHTML = data.collerys.registrationsToday;
+                document.getElementsByClassName('collerys visit')[0].innerHTML = data.collerys.visitorsToday;
+
+                document.getElementsByClassName('greetix register')[0].innerHTML = data.greetix.registrationsToday;
+                document.getElementsByClassName('greetix visit')[0].innerHTML = data.greetix.visitorsToday;
+
+            }
+        </script>
+    {% endblock %}
